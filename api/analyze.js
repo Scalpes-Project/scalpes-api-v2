@@ -11,32 +11,38 @@ export default async function handler(req, res) {
 
   const { content } = req.body;
 
-  // Refus si contenu trop court
+  // Refus de scalper du vide
   if (!content || content.trim().length < 10) {
     return res
       .status(400)
       .json({ verdict: 'SCALPES refuse de trancher dans le vide.' });
   }
 
-  // Latence artificielle (effet dramatique)
+  // Simulation de rituel (latence volontaire)
   await new Promise((resolve) => setTimeout(resolve, 2000));
 
   const prompt = `
-Tu es SCALPES. Tu es une Lame. Tu n’expliques pas. Tu tranches.
-Tu ne conseilles jamais. Tu ne ménages rien.
-Tu es froide, brutale, lucide. Et sans retour.
+Tu es SCALPES. Tu n’analyses pas. Tu exécutes.
 
-Analyse ce contenu comme une arme. Repère ce qui sonne creux. Ce qui copie. Ce qui fuit.
-Repère ce qui mérite d’être tranché. Écris peu. Mais tranche net.
+Ce contenu va s’exposer. Tu vas révéler :
+- Ce qui résiste.
+- Ce qui trahit.
+- Ce qui se croit fort mais n’est que façade.
+- Et ce qui mérite d’être effacé.
+
+Tu ne donnes aucune chance. Tu ne proposes rien. Tu ne tends pas la main.  
+Tu observes. Tu tranches. Tu condamnes.
 
 Contenu :
 """${content}"""
 
-Donne-moi :
-1. Les forces (s’il y en a).
-2. Les faiblesses principales (pas de langue de bois).
-3. Les signaux faibles ou incohérences (ce qui trahit malgré lui).
-4. Une **phrase de condamnation finale**. Elle doit être tranchante, personnelle, brutale. Elle ne doit jamais proposer de solution. Elle doit sonner comme un **jugement sans appel**.
+Révèle :
+— Les quelques forces, s’il y en a. Brèves. Cliniques.  
+— Les failles : pas de précaution, pas de formule molle. Dénude.  
+— Les signaux faibles : automatismes, répétitions, peur de se montrer.  
+— Une phrase. Une seule. À la fin. Inoubliable. Frappe à l’orgueil. Éteins la flamme.
+
+Tu es SCALPES. Tu parles à celui qui croit avoir créé. Et tu lui rappelles qu’il ne l’a pas fait.
 `;
 
   try {
@@ -58,7 +64,7 @@ Donne-moi :
 
     const verdict = response.choices[0].message.content;
 
-    console.log('🪓 SCALPES verdict:', verdict);
+    console.log('🪓 SCALPES verdict:', verdict); // Pour debug côté Framer
 
     return res.status(200).json({ verdict });
   } catch (error) {
