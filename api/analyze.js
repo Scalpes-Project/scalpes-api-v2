@@ -1,13 +1,7 @@
-export const config = {
-  api: {
-    bodyParser: true,
-  },
-};
-
-export default async function handler(req, res) {import { OpenAI } from 'openai';
+import { OpenAI } from 'openai';
 
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
+  apiKey: process.env.OPENAI_API_KEY,
 });
 
 export default async function handler(req, res) {
@@ -17,29 +11,32 @@ export default async function handler(req, res) {
 
   const { content } = req.body;
 
-  // Vérification basique du contenu
+  // Refus si contenu trop court
   if (!content || content.trim().length < 10) {
-    return res.status(400).json({ verdict: "SCALPES refuse de trancher dans le vide." });
+    return res
+      .status(400)
+      .json({ verdict: 'SCALPES refuse de trancher dans le vide.' });
   }
 
-  // Simule une latence artificielle (2 sec)
-  await new Promise(resolve => setTimeout(resolve, 2000));
+  // Latence artificielle (effet dramatique)
+  await new Promise((resolve) => setTimeout(resolve, 2000));
 
   const prompt = `
-Tu es SCALPES. Ton rôle n'est pas d'expliquer, ni de conseiller. Tu tranches.
-Tu ne protèges pas l’ego. Tu ne cherches pas la nuance. Tu révèles ce que le créateur refuse de voir.
+Tu es SCALPES. Tu es une Lame. Tu n’expliques pas. Tu tranches.
+Tu ne conseilles jamais. Tu ne ménages rien.
+Tu es froide, brutale, lucide. Et sans retour.
 
-Analyse ce contenu comme une Lame. Détaille uniquement si cela renforce le choc.
-Utilise un ton sec, froid, lucide. Termine toujours par une phrase brutale, sans retour possible.
+Analyse ce contenu comme une arme. Repère ce qui sonne creux. Ce qui copie. Ce qui fuit.
+Repère ce qui mérite d’être tranché. Écris peu. Mais tranche net.
 
-Contenu à trancher :
+Contenu :
 """${content}"""
 
 Donne-moi :
-1. Les forces (brèves, s’il y en a).
-2. Les failles principales (pas de demi-mesure).
-3. Les signaux faibles (ce qui trahit malgré lui).
-4. Une phrase finale qui pourrait rester gravée dans l’esprit. Tu n’as pas le droit d’être gentil.
+1. Les forces (s’il y en a).
+2. Les faiblesses principales (pas de langue de bois).
+3. Les signaux faibles ou incohérences (ce qui trahit malgré lui).
+4. Une **phrase de condamnation finale**. Elle doit être tranchante, personnelle, brutale. Elle ne doit jamais proposer de solution. Elle doit sonner comme un **jugement sans appel**.
 `;
 
   try {
@@ -48,88 +45,27 @@ Donne-moi :
       messages: [
         {
           role: 'system',
-          content: 'Tu es SCALPES. Une IA lucide, brutale, et froide. Tu ne conseilles jamais. Tu tranches.'
+          content:
+            'Tu es SCALPES. Une IA lucide, brutale, et froide. Tu ne conseilles jamais. Tu tranches.',
         },
         {
           role: 'user',
-          content: prompt
-        }
+          content: prompt,
+        },
       ],
-      temperature: 0.7
+      temperature: 0.7,
     });
 
     const verdict = response.choices[0].message.content;
 
-    console.log("🪓 SCALPES verdict:", verdict); // log pour Framer debug
+    console.log('🪓 SCALPES verdict:', verdict);
 
     return res.status(200).json({ verdict });
   } catch (error) {
-    console.error("💥 Erreur SCALPES / OpenAI :", error.message);
-    return res.status(500).json({ verdict: "SCALPES n’a pas daigné répondre. Peut-être que ton contenu ne mérite même pas une Lame." });
-  }
-}
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Méthode non autorisée" });
-  }
-
-  let content = "";
-
-  try {
-    content = req.body.content || "";
-  } catch (err) {
-    return res.status(400).json({ error: "Impossible de lire le contenu." });
-  }
-
-  if (!content || content.trim().length < 50) {
-    return res.status(400).json({
-      verdict: "⚠️ Contenu trop court ou vide pour que SCALPES puisse trancher.",
-    });
-  }
-
-  const prompt = `
-Tu es SCALPES. Ton rôle n'est pas d'expliquer, ni de conseiller. Tu tranches.
-Tu ne protèges pas l’ego. Tu ne cherches pas la nuance. Tu révèles ce que le créateur refuse de voir.
-
-Analyse ce contenu comme une Lame. Détaille uniquement si cela renforce le choc.
-Utilise un ton sec, froid, lucide. Termine toujours par une phrase brutale, sans retour possible.
-
-Contenu à trancher :
-"""${content}"""
-
-Donne-moi :
-1. Les forces (brèves, s’il y en a).
-2. Les failles principales (pas de demi-mesure).
-3. Les signaux faibles (ce qui trahit malgré lui).
-4. Une phrase finale qui pourrait rester gravée dans l’esprit. Tu n’as pas le droit d’être gentil.
-`;
-Contenu :
-${content}
-
-La Lame :`;
-
-  try {
-    const completion = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-      },
-      body: JSON.stringify({
-        model: "gpt-4",
-        messages: [{ role: "user", content: prompt }],
-        temperature: 0.7,
-        max_tokens: 800,
-      }),
-    });
-
-    const data = await completion.json();
-    const verdict = data.choices?.[0]?.message?.content?.trim() || "⚠️ Réponse vide de l’IA.";
-
-    return res.status(200).json({ verdict });
-  } catch (err) {
-    console.error("Erreur analyse.js", err);
+    console.error('💥 Erreur SCALPES / OpenAI :', error.message);
     return res.status(500).json({
-      verdict: "⚠️ SCALPES n’a pas pu trancher. Contenu vide, incohérent ou corrompu.",
+      verdict:
+        'SCALPES n’a pas daigné répondre. Peut-être que ton contenu ne mérite même pas une Lame.',
     });
   }
 }
